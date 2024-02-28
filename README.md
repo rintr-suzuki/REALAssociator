@@ -27,12 +27,19 @@
     $ sudo docker -v # confirm installation
     ```
 ## Usage
-* Download repository
+* Installation
   ```
   $ cd <base directory> # move to any directory (base directory) to clone REALAssociator
   $ git clone https://github.com/rintr-suzuki/REALAssociator.git
   $ cd REALAssociator
   ```
+
+* Execution
+  ```
+  $ ./REALAssociator.bash --infile data/picks.json
+  # See 'data' directory for the result.
+  ```
+
 * See [here](docs/README-usage.md) for the detailed information.
 
 ## Acknowledgements

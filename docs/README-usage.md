@@ -1,14 +1,6 @@
 # REALAssociator
 Detailed usage for REALAssociator
 
-## Brief usage
-```
-$ ./docker-run.bash
-(container)$ ./REALAssociator.bash --infile data/picks.json
-(container)$ exit
-# See 'data' directory for the result.
-```
-
 ## What is the output?
 * association result file: `data/associated_picks.json`
 
@@ -92,16 +84,11 @@ $ ./docker-run.bash
 
 ### 3. Execute REALAssociator
 ```
-# Pull docker image and run the 'real' container. *1
-$ ./docker-run.bash
-
-# Run REALAssociator on the container environment.
+# Pull docker image (only once), run the 'real' container and then execute REALAssociator on the container environment. *1
+# Stop and delete the container environment after execution is complete.
 (container)$ ./REALAssociator.bash --infile INFILE [--dep DEP] [--ho HO] [--ddep DDEP] [--dho DHO]
 # e.g. 
 # (container)$ ./REALAssociator.bash --infile data/picks.json
-
-# Exit the container environment after execution is complete.
-(container)$ exit
 
 # You can find the output of REALAssociator in '<base directory>/REAL/<base directory of infile>' directory.
 ```
