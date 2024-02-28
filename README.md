@@ -1,4 +1,4 @@
-# REAL
+# REALAssociator
 ## Summary
 
 ![](docs/assets/REAL-forked_overview.png)
@@ -29,9 +29,9 @@
 ## Usage
 * Download repository
   ```
-  $ cd <base directory> # move to any directory (base directory) to clone REAL
-  $ git clone https://github.com/rintr-suzuki/REAL.git
-  $ cd REAL
+  $ cd <base directory> # move to any directory (base directory) to clone REALAssociator
+  $ git clone https://github.com/rintr-suzuki/REALAssociator.git
+  $ cd REALAssociator
   ```
 * See [here](docs/README-usage.md) for the detailed information.
 

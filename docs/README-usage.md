@@ -1,10 +1,10 @@
-# REAL
-Detailed usage for REAL
+# REALAssociator
+Detailed usage for REALAssociator
 
 ## Brief usage
 ```
 $ ./docker-run.bash
-(container)$ ./REAL.bash --infile data/picks.json
+(container)$ ./REALAssociator.bash --infile data/picks.json
 (container)$ exit
 # See 'data' directory for the result.
 ```
@@ -51,7 +51,7 @@ $ ./docker-run.bash
   * G option of original REAL configration is automatically calculated to use the entire file from travel time table.
   * You can change the path with `--ttime` option.
 
-### 2. Configuration of REAL
+### 2. Configuration of REALAssociator
 * Set the following options at least.
 
   | Option | Description |
@@ -90,20 +90,20 @@ $ ./docker-run.bash
 
 * Use `-h` option for the detailed information of all other options.
 
-### 3. Execute REAL
+### 3. Execute REALAssociator
 ```
 # Pull docker image and run the 'real' container. *1
 $ ./docker-run.bash
 
-# Run REAL on the container environment.
-(container)$ ./REAL.bash --infile INFILE [--dep DEP] [--ho HO] [--ddep DDEP] [--dho DHO]
+# Run REALAssociator on the container environment.
+(container)$ ./REALAssociator.bash --infile INFILE [--dep DEP] [--ho HO] [--ddep DDEP] [--dho DHO]
 # e.g. 
-# (container)$ ./REAL.bash --infile data/picks.json
+# (container)$ ./REALAssociator.bash --infile data/picks.json
 
 # Exit the container environment after execution is complete.
 (container)$ exit
 
-# You can find the output of REAL in '<base directory>/REAL/<base directory of infile>' directory.
+# You can find the output of REALAssociator in '<base directory>/REAL/<base directory of infile>' directory.
 ```
 
 ## Notes
