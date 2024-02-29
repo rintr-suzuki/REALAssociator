@@ -30,8 +30,6 @@ done
 
 args=$@
 
-exit
-
 ## pull image
 if ! $docker_head_images docker images --format '{{.Repository}}:{{.Tag}}' | grep -q -x "$image_name:$tag_name"; then
     $docker_head docker pull rintrsuzuki/$image_name:$tag_name
