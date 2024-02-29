@@ -4,28 +4,33 @@
 image_name='real'; tag_name='v1.0'
 container_name='real-1'
 
-## read args
-workdir=`pwd`; volume="-v $workdir:$workdir"
-for arg in "$@"; do
-    if [[ $arg == *"/"* ]]; then
-        arg="$(cd -- "$(dirname -- "$arg")" && pwd)" || exit $? # convert to absolute dirname
-        volume+=" -v $arg:$arg"
-    fi
-done
-
-args=$@
-
 ## check OS
 OSname="Mac-Linux"
 if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "win32" ]]; then
     OSname="Windows"
 fi
 
-## set docker config
+## set config
 docker_head="sudo"; docker_head_images="sudo"
+workdir=`pwd`; arg_head=""
+
 if [[ $OSname == "Windows" ]]; then
     docker_head="winpty"; docker_head_images=""
+    workdir=/`pwd`; arg_head="/"
 fi
+
+## read args
+volume="-v $workdir:$workdir"
+for arg in ${@//=/ }; do
+    if [[ $arg == *"/"* ]]; then
+        arg="$arg_head$(cd -- "$(dirname -- "$arg")" && pwd)" || exit $? # convert to absolute dirname
+        volume+=" -v $arg:$arg"
+    fi
+done
+
+args=$@
+
+exit
 
 ## pull image
 if ! $docker_head_images docker images --format '{{.Repository}}:{{.Tag}}' | grep -q -x "$image_name:$tag_name"; then
