@@ -29,9 +29,8 @@
 ## Usage
 * Installation
   ```
-  $ cd <base directory> # move to any directory (base directory) to clone REALAssociator
-  $ git clone https://github.com/rintr-suzuki/REALAssociator.git
-  $ cd REALAssociator
+  $ git clone https://github.com/rintr-suzuki/REAL.git
+  $ cd REAL
   ```
 
 * Execution

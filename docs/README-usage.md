@@ -20,8 +20,8 @@ Detailed usage for REALAssociator
   * You can pick phase from WIN waveform files with [WIN2PhaseNet](https://github.com/rintr-suzuki/WIN2PhaseNet) and PhaseNet.
   * **Only the 1st day of data within the file is processed.** Please divide the data into daily data. <br>
     D option of original REAL configration is automatically set to the 1st day.
-  * Make directry named `<base directory>/REAL/data` and put the files there. <br>
-    You can change the path with `--infile` option **under `<base directory>/REAL`**.
+  * Make directry named `REAL/data` and put the files there. <br>
+    You can change the path with `--infile` option.
 
 * channel table: correspondence Table of stations and their code
   * format: txt format <br>
@@ -33,15 +33,15 @@ Detailed usage for REALAssociator
     -Horizontal compornent 2: UD,U,Z,VZ
   * NIED provides channel table at the same time when downloading WIN waveform files. <br>
     For the detailed information, see https://hinetwww11.bosai.go.jp/auth/download/cont/?LANG=en
-  * Put the file as `<base directory>/REAL/etc/stn.tbl`. <br>
-    You can change the path with `--chtbl` option **under `<base directory>/REAL`**.
+  * Put the file as `REAL/etc/stn.tbl`. <br>
+    You can change the path with `--chtbl` option.
 
 * travel time table
   * format: txt format <br>
     For the detailed information, see "traveltime table" in [here](../org/REAL_userguide_July2021.pdf).
-  * You can use `<base directory>/REAL/etc/ttdb.txt` created from the velocity structure by Hasegawa et al. (1978) as a default.
+  * You can use `REAL/etc/ttdb.txt` created from the velocity structure by Hasegawa et al. (1978) as a default.
   * G option of original REAL configration is automatically calculated to use the entire file from travel time table.
-  * You can change the path with `--ttime` option **under `<base directory>/REAL`**.
+  * You can change the path with `--ttime` option.
 
 ### 2. Configuration of REALAssociator
 * Set the following options at least.
@@ -86,11 +86,11 @@ Detailed usage for REALAssociator
 ```
 # Pull docker image (only once), run the 'real' container and then execute REALAssociator on the container environment. *1
 # Stop and delete the container environment after execution is complete.
-(container)$ ./REALAssociator.bash --infile INFILE [--dep DEP] [--ho HO] [--ddep DDEP] [--dho DHO]
+$ ./REALAssociator.bash --infile INFILE [--dep DEP] [--ho HO] [--ddep DDEP] [--dho DHO]
 # e.g. 
-# (container)$ ./REALAssociator.bash --infile data/picks.json
+# $ ./REALAssociator.bash --infile data/picks.json
 
-# You can find the output of REALAssociator in '<base directory>/REAL/<base directory of infile>' directory.
+# You can find the output of REALAssociator in '<dirname of infile>' directory.
 ```
 
 ## Notes

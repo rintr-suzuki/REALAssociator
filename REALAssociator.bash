@@ -1,5 +1,18 @@
 #!/bin/bash
 
+## def names
+image_name='real'; tag_name='v1.0'
+container_name='real-1'
+
+## read args
+workdir=`pwd`; volume="-v $workdir:$workdir"
+for arg in "$@"; do
+    if [[ $arg == *"/"* ]]; then
+        arg="$(cd -- "$(dirname -- "$arg")" && pwd)" || exit $? # convert to absolute dirname
+        volume+=" -v $arg:$arg"
+    fi
+done
+
 args=$@
 
 ## check OS
@@ -8,17 +21,10 @@ if [[ "$OSTYPE" == "msys" ]] || [[ "$OSTYPE" == "cygwin" ]] || [[ "$OSTYPE" == "
     OSname="Windows"
 fi
 
-## set config
+## set docker config
 docker_head="sudo"; docker_head_images="sudo"
 if [[ $OSname == "Windows" ]]; then
     docker_head="winpty"; docker_head_images=""
-fi
-
-name="real"
-
-if [[ $name == "real" ]]; then
-    # real container
-    image_name='real'; tag_name='v1.0'
 fi
 
 ## pull image
@@ -29,18 +35,13 @@ if ! $docker_head_images docker images --format '{{.Repository}}:{{.Tag}}' | gre
 fi
 
 ## run container
-workdir=`pwd`
-container_name='real-1'
-container_workdir='/data/REAL'
-if [[ $name == "real" ]]; then
-    $docker_head docker run -itd --rm \
-    -v $workdir:$container_workdir \
-    --name $container_name \
-    $image_name:$tag_name
-fi
+$docker_head docker run -itd --rm \
+$volume \
+--name $container_name \
+$image_name:$tag_name
 
 ## exec REALAssociator
-$docker_head docker exec -it $container_name python3 src/REAL.py $args
+$docker_head docker exec -it -w $workdir $container_name python3 src/REAL.py $args
 
 ## stop container
 $docker_head docker stop $container_name
