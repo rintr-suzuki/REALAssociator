@@ -41,6 +41,8 @@
 
 * See [here](docs/README-usage.md) for the detailed information.
 
+* See [here](docs/Tips.md) for the tips of this tool.
+
 ## Acknowledgements
 * This program is forked from the original version to test. Original version is [here](https://github.com/Dal-mzhang/REAL). <br>
 See LISENCE for the copyright notice.
