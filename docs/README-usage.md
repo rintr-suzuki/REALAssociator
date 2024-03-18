@@ -20,7 +20,7 @@ Detailed usage for REALAssociator
   * You can pick phase from WIN waveform files with [WIN2PhaseNet](https://github.com/rintr-suzuki/WIN2PhaseNet) and PhaseNet.
   * **Only the 1st day of data within the file is processed.** Please divide the data into daily data. <br>
     D option of original REAL configration is automatically set to the 1st day.
-  * Make directry named `REAL/data` and put the files there. <br>
+  * Make directry named `REALAssociator/data` and put the files there. <br>
     You can change the path with `--infile` option.
 
 * channel table: correspondence Table of stations and their code
@@ -33,13 +33,13 @@ Detailed usage for REALAssociator
     -Horizontal compornent 2: UD,U,Z,VZ
   * NIED provides channel table at the same time when downloading WIN waveform files. <br>
     For the detailed information, see https://hinetwww11.bosai.go.jp/auth/download/cont/?LANG=en
-  * Put the file as `REAL/etc/stn.tbl`. <br>
+  * Put the file as `REALAssociator/etc/stn.tbl`. <br>
     You can change the path with `--chtbl` option.
 
 * travel time table
   * format: txt format <br>
     For the detailed information, see "traveltime table" in [here](../org/REAL_userguide_July2021.pdf).
-  * You can use `REAL/etc/ttdb.txt` created from the velocity structure by Hasegawa et al. (1978) as a default.
+  * You can use `REALAssociator/etc/ttdb.txt` created from the velocity structure by Hasegawa et al. (1978) as a default.
   * G option of original REAL configration is automatically calculated to use the entire file from travel time table.
   * You can change the path with `--ttime` option.
 

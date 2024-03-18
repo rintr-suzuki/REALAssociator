@@ -1,7 +1,7 @@
 # REALAssociator
 ## Summary
 
-![](docs/assets/REAL-forked_overview.png)
+![](docs/assets/REALAssociator_overview.png)
  
 * Tool to associate phase data from PhaseNet (Zhu and Beroza, 2019) using REAL (Zhang et al., 2019).
 * Easy to run on various OS by using **docker**.
@@ -29,8 +29,8 @@
 ## Usage
 * Installation
   ```
-  $ git clone https://github.com/rintr-suzuki/REAL.git
-  $ cd REAL
+  $ git clone https://github.com/rintr-suzuki/REALAssociator.git
+  $ cd REALAssociator
   ```
 
 * Execution
