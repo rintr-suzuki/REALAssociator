@@ -33,9 +33,10 @@ class PickConverter(object):
         if self.n-1 >= 0:
             originalPicks = pd.DataFrame(self.picks.meta)
             preAssociatedPicks = pd.DataFrame(realExecutor.picklist())
-
+                  
             originalKeys = self.picks.meta[0].keys()
             merged_df = pd.merge(originalPicks, preAssociatedPicks, on=["id", "type", "timestamp"], how="left", suffixes=('', '_pre'), indicator=True)
+            # merged_df.to_csv("tmp%s.csv" % self.n)
             unique_elements_df = merged_df[merged_df["_merge"] == "left_only"][originalKeys]
             picks = unique_elements_df.to_dict(orient='records')
         else:

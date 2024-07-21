@@ -15,10 +15,12 @@ class EventInfo(object):
             self.event["year"] = event[1]
             self.event["month"] = event[2]
             self.event["day"] = event[3]
-            self.event["time"] = event[4]
+            self.event["time"] = event[4].split('.')
 
-            event_timestamp_str = self.event["year"] + self.event["month"] + self.event["day"] + " " + self.event["time"]
-            event_timestamp_dt = datetime.datetime.strptime(event_timestamp_str, '%Y%m%d %H:%M:%S.%f')
+
+            event_timestamp_str = self.event["year"] + self.event["month"] + self.event["day"] + " " + self.event["time"][0]
+            event_timestamp_dt = datetime.datetime.strptime(event_timestamp_str, '%Y%m%d %H:%M:%S') \
+                + datetime.timedelta(microseconds=round(int(self.event["time"][1].ljust(6, '0'))/1000.0)*1000)
             self.event["timestamp"] = event_timestamp_dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
             self.event["otime"] = float(event[5])
@@ -51,7 +53,7 @@ class EventInfo(object):
                 pick["absolute_time"] = float(rawpick[3])
                 pick["time"] = float(rawpick[4])
 
-                pick_timestamp_dt = event_timestamp_dt + datetime.timedelta(seconds=pick["time"])
+                pick_timestamp_dt = event_timestamp_dt + datetime.timedelta(seconds=round(pick["time"], 3))
                 pick["timestamp"] = pick_timestamp_dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
                 pick["amp"] = float(rawpick[5])
