@@ -4,8 +4,19 @@ import argparse
 from master import MasterConfig, Config, MasterProcess
 from service import PickConverter, RealExecutor
 
+def tp1(arg):
+    parts = arg.split(',')
+    result = []
+    for part in parts:
+        values = list(map(int, part.split('-')))
+        result.append(values)
+
+    if len(result) <= 1:
+        result = result[0]
+    return result
+
 def read_args():
-    tp1 = lambda x:list(map(str, x.split('/')))
+    #tp1 = lambda x:list(map(str, x.split(','))map(str, x.split('/')))
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--infile', help='path of input phase file created by PhaseNet (picks.json)')
@@ -28,8 +39,7 @@ def read_args():
 
     # parser.add_argument('--ielev', type=int, default=2, \
     #     help='station elevation & sedimentary correction 0: no correction, 1: elevation correction only, 2: sedimentary correction only')
-    parser.add_argument('--nps', type=tp1, default=[4, 0, 6], help='threshold for number of P/S/P+S')
-    # parser.add_argument('--nps2', type=tp1, default=[4, 0, 6], help='threshold for number of P/S/P+S for 2nd REAL processing')
+    parser.add_argument('--nps', type=tp1, default=[[30, 10, 40], [0, 2, 5]], help='threshold for number of P-S-P&S')
     parser.add_argument('--std', type=float, default=1.73, help='standard deviation threshold within 1 event')
     parser.add_argument('--nrt', type=float, default=1.3, help='nrt*default time window(travel time for 1 grid)')
     parser.add_argument('--ires', type=int, default=1, help='resolution_or_not')
@@ -48,23 +58,22 @@ def main(params):
     masterConfig = MasterConfig(params)
     masterProcess = MasterProcess(masterConfig)
 
-    #
-    masterConfig.itr_real = 1 # todo
+    # init
+    # masterConfig.itr_real = 1 # todo
+    pickConverter = PickConverter(masterConfig)
+    realExecutor = RealExecutor(masterConfig)
+
     for n in range(masterConfig.itr_real):
-        if n == 0:
-            # init
-            config = Config(masterConfig, n)
-            pickConverter = PickConverter(config)
+        config = Config(masterConfig, n)
 
-            # json->txt
-            pickConverter.convertFromJson()
-        else:
-            # json->txt # todo
-            pickConverter.convertFromJson(realExecutor) 
+        # json->txt
+        pickConverter.convertFromJson(config, realExecutor)
 
-        realExecutor = RealExecutor(pickConverter, config)
-        realExecutor.real() # txt->REAL->txt
-        realExecutor.convert2json(n) # txt->json
+        # txt->REAL->txt
+        realExecutor.real(config, pickConverter)
+
+        # txt->json
+        realExecutor.convert2json(config)
 
     # remove tmp file
     masterProcess.rm_tmp()

@@ -2,82 +2,99 @@ import os
 import datetime
 import json
 import subprocess as sp
+import pandas as pd
 
 from model import Picks
 from model_event import EventInfo
 
 class PickConverter(object):
     def __init__(self, config):
-        self.infile = config.master.infile
-        self.picks = Picks(self.infile)
-        self.file_day = self.picks.day
+        self.config = config
+    
+    def convertFromJson(self, config, realExecutor):
+        # set config
+        ## itr
+        self.n = config.n
 
-        self.datatmp_dir_header = os.path.join(config.master.tmpdir, 'data')
-        self.outtmp_dir_header = os.path.join(config.master.tmpdir, 'out')
+        ## input
+        self.infile = self.config.infile
+        self.picks = Picks(self.infile)
+
+        ## output
+        self.file_day = self.picks.day
+        self.datatmp_dir_header = os.path.join(self.config.tmpdir, 'data-%s' % self.n)
+        self.outtmp_dir_header = os.path.join(self.config.tmpdir, 'out-%s' % self.n)
         self.datatmp_dir = os.path.join(self.datatmp_dir_header, self.file_day)
         self.outtmp_dir = os.path.join(self.outtmp_dir_header, self.file_day)
         os.makedirs(self.datatmp_dir, exist_ok=True)
         os.makedirs(self.outtmp_dir, exist_ok=True)
-    
-    def convertFromJson(self, realExecutor=None):
-        if realExecutor is None:
-            # read picks
-            picks = self.picks
 
-            picks_dict = {}
-            for pick in picks.meta:
-                id = pick['id']
-                amp = pick['amp']
-                type = pick['type']
-                
-                if id not in picks_dict.keys():
-                    picks_dict[id] = {}
-                if type not in picks_dict[id].keys():
-                    picks_dict[id][type] = []
-                picks_dict[id][type].append(pick)
+        # read input
+        if self.n-1 >= 0:
+            originalPicks = pd.DataFrame(self.picks.meta)
+            preAssociatedPicks = pd.DataFrame(realExecutor.picklist())
 
-            # write picks
-            for id, picks_id in picks_dict.items():
-                for type, picks in picks_id.items():
-                    for pick in picks:
-                        # read
-                        timestamp = pick['timestamp']
-                        prob = pick['prob']
-                        amp = pick['amp']
-                        
-                        # file name
-                        net = "net"
-                        type = type.upper()
-                        outtxt = ".".join([net, id, type]) + ".txt"
-
-                        # value
-                        timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
-                        base_time = datetime.datetime.strptime(self.file_day, '%Y%m%d') #REALは0時基準の相対時刻を必要とする
-                        pick = (timestamp - base_time).total_seconds()
-                        pick = str(pick)
-
-                        prob = str(prob)
-                        amp = str(amp)
-                        line = ' '.join([pick, prob, amp]) + '\n'
-                        
-                        # write
-                        with open(os.path.join(self.datatmp_dir, outtxt), 'a') as f:
-                            f.write(line)
-
+            originalKeys = self.picks.meta[0].keys()
+            merged_df = pd.merge(originalPicks, preAssociatedPicks, on=["id", "type", "timestamp"], how="left", suffixes=('', '_pre'), indicator=True)
+            unique_elements_df = merged_df[merged_df["_merge"] == "left_only"][originalKeys]
+            picks = unique_elements_df.to_dict(orient='records')
         else:
-            pass
+            picks = self.picks.meta
+
+        # read picks
+        picks_dict = {}
+        for pick in picks:
+            id = pick['id']
+            amp = pick['amp']
+            type = pick['type']
+            
+            if id not in picks_dict.keys():
+                picks_dict[id] = {}
+            if type not in picks_dict[id].keys():
+                picks_dict[id][type] = []
+            picks_dict[id][type].append(pick)
+
+        # write picks
+        for id, picks_id in picks_dict.items():
+            for type, picks in picks_id.items():
+                for pick in picks:
+                    # read
+                    timestamp = pick['timestamp']
+                    prob = pick['prob']
+                    amp = pick['amp']
+                    
+                    # file name
+                    net = "net"
+                    type = type.upper()
+                    outtxt = ".".join([net, id, type]) + ".txt"
+
+                    # value
+                    timestamp = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")
+                    base_time = datetime.datetime.strptime(self.file_day, '%Y%m%d') #REALは0時基準の相対時刻を必要とする
+                    pick = (timestamp - base_time).total_seconds()
+                    pick = str(pick)
+
+                    prob = str(prob)
+                    amp = str(amp)
+                    line = ' '.join([pick, prob, amp]) + '\n'
+                    
+                    # write
+                    with open(os.path.join(self.datatmp_dir, outtxt), 'a') as f:
+                        f.write(line)
 
 class RealExecutor(object):
-    def __init__(self, pickConverter, config):
-        self.config = config.master
+    def __init__(self, config):
+        self.config = config
 
+        self.meta = []
+
+    def real(self, config, pickConverter):
         self.in_dir = pickConverter.datatmp_dir
         self.rawout_dir = pickConverter.outtmp_dir
-        self.outdir = config.master.outdir
+        self.outdir = self.config.outdir
 
         self.file_day = pickConverter.file_day
 
-    def real(self):
         datestr = os.path.basename(self.file_day)
 
         # D yyyy/mm/dd
@@ -93,7 +110,7 @@ class RealExecutor(object):
         vel_value = '/'.join(str(x) for x in l)
 
         # S np0/ns0/nps0/nppp/std0/dtps/nrt[/rsel/ires] (int/int/int/int/double/double/double/[double/int])
-        l = [self.config.nps[0], self.config.nps[1], self.config.nps[2], 1, self.config.std, 0.5, self.config.nrt, self.config.rsel, self.config.ires]
+        l = [config.nps[0], config.nps[1], config.nps[2], 1, self.config.std, 0.5, self.config.nrt, self.config.rsel, self.config.ires]
         sup_value = '/'.join(str(x) for x in l)
 
         # G trx/trh/tdx/tdh (degree/km/degree/km) info of ttime
@@ -118,7 +135,7 @@ class RealExecutor(object):
         out = proc.stdout.decode("utf8")
         print("[RealExecutor.real]: REAL", out)
     
-    def convert2json(self, n):
+    def convert2json(self, config, mkEachJson=False):
         # read txt
         events_rawfile = os.path.join(self.rawout_dir, "catalog_sel.txt")
         picks_rawfile = os.path.join(self.rawout_dir, "phase_sel.txt")
@@ -152,8 +169,79 @@ class RealExecutor(object):
         eventInfoList = [EventInfo(i+1, event, picks, "real") for i, (event, picks) in enumerate(zip(events_meta, picks_meta))]
 
         # write json
-        meta = [eventInfo.toJson() for eventInfo in eventInfoList]
-        outfile = os.path.join(self.outdir, "associated_picks.json")
+        ## add to meta
+        metaone = [eventInfo.toJson() for eventInfo in eventInfoList]
+        self.meta.append(metaone)
 
+        ## write output
+        if mkEachJson:
+            self.writeJson(config.n)
+
+        self.writeJson()
+
+    def picklist(self, n=-1):
+        l = []
+
+        if n >= 0:
+            metaone = self.meta[n]
+            for item in metaone:
+                l += item['picksInfo']
+
+        elif n == -1:
+            for metaone in self.meta:
+                for item in metaone:
+                    l += item['picksInfo']
+
+        return l
+    
+    def eventlist(self, n=-1):
+        l = []
+
+        if n >= 0:
+            metaone = self.meta[n]
+            for item in metaone:
+                l.append(item['eventInfo'])
+
+        elif n == -1:
+            for metaone in self.meta:
+                for item in metaone:
+                    l.append(item['eventInfo'])
+
+        return l
+    
+    def writeJson(self, n=-1):
+        # write only one
+        if n >= 0:
+            outfile = os.path.join(self.outdir, "picks_associated-%s.json" % n)
+            outmeta = self.meta[n]
+
+        # write all
+        elif n == -1:
+            outfile = os.path.join(self.outdir, "picks_associated.json")
+
+            ## 
+            outmeta0 = []
+            for i in range(len(self.meta)):
+                ### add itr index
+                outmetaone0 = self.meta[i]
+                for item in outmetaone0:
+                    item['itr'] = i + 1 # start from 1
+
+                ### sort and concat meta
+                outmeta0 += sorted(outmetaone0, key=lambda x: x['index'])
+
+            ## rename index for one iteration
+            outmeta = []
+            key_mapping = {
+                "index": "indexOneItr"
+            }
+            for item in outmeta0:
+                outmeta.append({key_mapping.get(key, key): value for key, value in item.items()})
+
+            ## add index for whole process
+            for i, item in enumerate(outmeta):
+                item['index'] = i + 1 # start from 1
+
+        ## make output json
         with open(outfile, 'w') as f:
-            json.dump(meta, f, indent=2)
+            json.dump(outmeta, f, indent=2)

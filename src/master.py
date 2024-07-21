@@ -42,14 +42,15 @@ class MasterConfig(object):
 class Config(object):
     def __init__(self, masterConfig, n):
         self.master = masterConfig
+        self.n = n
 
-    def set_in(self, n):
-        self.indir = self.master.indir
-        # self.indir = os.path.join(self.master.indir, 'win')
-        self.files = glob.glob(os.path.join(self.indir, '*'))
-
-    def set_out(self, n):
-        self.outcsv = "trg_located-%s.csv" % n
+        # if set several th
+        if type(self.master.nps[0]) == list:
+            self.nps = self.master.nps[self.n]
+        elif type(self.master.nps[0]) == int:
+            self.nps = self.master.nps
+        else:
+            print("[Error]: --nps is not proper")
 
 class MasterProcess(object):
     def __init__(self, config):
