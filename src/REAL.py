@@ -39,7 +39,8 @@ def read_args():
 
     # parser.add_argument('--ielev', type=int, default=2, \
     #     help='station elevation & sedimentary correction 0: no correction, 1: elevation correction only, 2: sedimentary correction only')
-    parser.add_argument('--nps', type=tp1, default=[[30, 10, 40], [0, 2, 5]], help='threshold for number of P-S-P&S')
+    parser.add_argument('--nps', type=tp1, default=[[30, 10, 40], [0, 2, 5]], help='Threshold for number of P,S,P+S on association connected by hyphens. \
+                        It can be set for each iteration by separating them with commas. (default: 30-10-40,0-2-5)')
     parser.add_argument('--std', type=float, default=1.73, help='standard deviation threshold within 1 event')
     parser.add_argument('--nrt', type=float, default=1.3, help='nrt*default time window(travel time for 1 grid)')
     parser.add_argument('--ires', type=int, default=1, help='resolution_or_not')
@@ -47,7 +48,7 @@ def read_args():
     parser.add_argument('--rsel', type=float, default=5.0, help='remove picks with large residuals less than rsel*STD')
 
     # step of REAL
-    parser.add_argument('--itr_real', type=int, default=2, help='number of REAL calculation')
+    parser.add_argument('--itr_real', type=int, default=2, help='Number of REAL process iterations. After 2nd association, remaining picks are used, excluding the picks associated before the (n-1)th association. (default: 2)')
 
     args = parser.parse_args()
     return args

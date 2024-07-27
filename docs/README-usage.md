@@ -2,7 +2,7 @@
 Detailed usage for REALAssociator
 
 ## What is the output?
-* association result file: `data/associated_picks.json`
+* association result file: `data/picks_associated.json`
 
   | Key | Description |
   | --- | --- |
@@ -53,6 +53,8 @@ Detailed usage for REALAssociator
   | `[--ho HO]` | - search range in horizontal (unit: degree, default: `0.7`) <br> - same as "rx" |
   | `[--ddep DDEP]` | - search grid size for depth (unit: km, default: `10`) <br> - same as "tdh" | 
   | `[--dho DHO]` | - search grid size for horizontal (unit: degree, default: `0.1`) <br> - same as "tdx" |
+  | `[--nps NPS]` | Threshold for number of P,S,P+S on association connected by hyphens. <br> It can be set for each iteration by separating them with commas. (default: 30-10-40,0-2-5) |
+  | `[--itr_real ITR_REAL]` | Number of REAL process iterations. <br> After 2nd association, remaining picks are used, excluding the picks associated before the (n-1)th association. (default: 2) |
 
 * Other settings of original REAL configration are as follows:
   * R option
