@@ -30,7 +30,7 @@ class PickConverter(object):
         os.makedirs(self.outtmp_dir, exist_ok=True)
 
         # read input
-        if self.n-1 >= 0:
+        if (self.n-1 >= 0) and (len(realExecutor.picklist()) > 0):
             originalPicks = pd.DataFrame(self.picks.meta)
             preAssociatedPicks = pd.DataFrame(realExecutor.picklist())
                   
