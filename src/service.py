@@ -136,7 +136,7 @@ class RealExecutor(object):
         out = proc.stdout.decode("utf8")
         print("[RealExecutor.real]: REAL", out)
     
-    def convert2json(self, config, mkEachJson=False):
+    def __convert2dict(self):
         # read txt
         events_rawfile = os.path.join(self.rawout_dir, "catalog_sel.txt")
         picks_rawfile = os.path.join(self.rawout_dir, "phase_sel.txt")
@@ -167,11 +167,15 @@ class RealExecutor(object):
         # print(len(events_meta), len(picks_meta)); exit()
 
         # make EventInfo instance
-        eventInfoList = [EventInfo(i+1, event, picks, "real") for i, (event, picks) in enumerate(zip(events_meta, picks_meta))]
+        self.eventInfoList = [EventInfo(i+1, event, picks, "real") for i, (event, picks) in enumerate(zip(events_meta, picks_meta))]
+
+    def convert2json(self, config, mkEachJson=False):
+        # convert to dict
+        self.__convert2dict()
 
         # write json
         ## add to meta
-        metaone = [eventInfo.toJson() for eventInfo in eventInfoList]
+        metaone = [eventInfo.toJson() for eventInfo in self.eventInfoList]
         self.meta.append(metaone)
 
         ## write output
@@ -243,6 +247,6 @@ class RealExecutor(object):
             for i, item in enumerate(outmeta):
                 item['index'] = i + 1 # start from 1
 
-        ## make output json
+        # make output json
         with open(outfile, 'w') as f:
             json.dump(outmeta, f, indent=2)
