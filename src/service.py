@@ -10,6 +10,8 @@ from model_event import EventInfo
 class PickConverter(object):
     def __init__(self, config):
         self.config = config
+
+        self.picksList = []
     
     def convertFromJson(self, config, realExecutor):
         # set config
@@ -22,8 +24,8 @@ class PickConverter(object):
 
         ## output
         self.file_day = self.picks.day
-        self.datatmp_dir_header = os.path.join(self.config.tmpdir, 'data-%s' % self.n)
-        self.outtmp_dir_header = os.path.join(self.config.tmpdir, 'out-%s' % self.n)
+        self.datatmp_dir_header = os.path.join(self.config.tmpdir, 'data-%s' % n)
+        self.outtmp_dir_header = os.path.join(self.config.tmpdir, 'out-%s' % n)
         self.datatmp_dir = os.path.join(self.datatmp_dir_header, self.file_day)
         self.outtmp_dir = os.path.join(self.outtmp_dir_header, self.file_day)
         os.makedirs(self.datatmp_dir, exist_ok=True)
@@ -41,10 +43,13 @@ class PickConverter(object):
                 unique_elements_df = merged_df[merged_df["_merge"] == "left_only"][originalKeys]
                 picks = unique_elements_df.to_dict(orient='records')
             else:
-                print("[WARN]: No event is associated in itteration %s" % (n+1))
+                print("[WARN]: No event is associated in itteration %s" % ((n-1)+1))
+                picks = self.picksList[n-1] # read picks of the previous itteration.
 
         elif n == 0:
             picks = self.picks.meta
+
+        self.picksList.append(picks) # save current itteration
 
         # read picks
         picks_dict = {}
