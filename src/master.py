@@ -46,11 +46,20 @@ class Config(object):
 
         # if set several th
         if type(self.master.nps[0]) == list:
-            self.nps = self.master.nps[self.n]
+            if len(self.master.nps) == self.master.itr_real:
+                self.nps = self.master.nps[self.n]
+            else:
+                print("[Error]: --nps format is not proper. \
+                      For example, 2 sets of thresholds are required for a 2 iteration process, like '30-10-40,0-2-5'. \
+                      Alternatively, common set of thresholds can be set like '30-10-40'.")
         elif type(self.master.nps[0]) == int:
-            self.nps = self.master.nps
+            if len(self.master.nps) == 3:
+                self.nps = self.master.nps
+            else:
+                print("[Error]: --nps format is not proper. Required 3 values, like '30-10-40', but given %s. \
+                      Alternatively, individual sets of thresholds can be set like '30-10-40,0-2-5'." % len(self.master.nps))
         else:
-            print("[Error]: --nps is not proper")
+            print("[Error]: --nps format is not proper. Must be like '30-10-40,0-2-5' or '30-10-40'.")
 
 class MasterProcess(object):
     def __init__(self, config):

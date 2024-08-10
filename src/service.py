@@ -14,7 +14,7 @@ class PickConverter(object):
     def convertFromJson(self, config, realExecutor):
         # set config
         ## itr
-        self.n = config.n
+        n = config.n
 
         ## input
         self.infile = self.config.infile
@@ -30,16 +30,20 @@ class PickConverter(object):
         os.makedirs(self.outtmp_dir, exist_ok=True)
 
         # read input
-        if (self.n-1 >= 0) and (len(realExecutor.picklist()) > 0):
-            originalPicks = pd.DataFrame(self.picks.meta)
-            preAssociatedPicks = pd.DataFrame(realExecutor.picklist())
-                  
-            originalKeys = self.picks.meta[0].keys()
-            merged_df = pd.merge(originalPicks, preAssociatedPicks, on=["id", "type", "timestamp"], how="left", suffixes=('', '_pre'), indicator=True)
-            # merged_df.to_csv("tmp%s.csv" % self.n)
-            unique_elements_df = merged_df[merged_df["_merge"] == "left_only"][originalKeys]
-            picks = unique_elements_df.to_dict(orient='records')
-        else:
+        if n >= 1:
+            if len(realExecutor.picklist()) > 0:
+                originalPicks = pd.DataFrame(self.picks.meta)
+                preAssociatedPicks = pd.DataFrame(realExecutor.picklist())
+                    
+                originalKeys = self.picks.meta[0].keys()
+                merged_df = pd.merge(originalPicks, preAssociatedPicks, on=["id", "type", "timestamp"], how="left", suffixes=('', '_pre'), indicator=True)
+                # merged_df.to_csv("tmp%s.csv" % n)
+                unique_elements_df = merged_df[merged_df["_merge"] == "left_only"][originalKeys]
+                picks = unique_elements_df.to_dict(orient='records')
+            else:
+                print("[WARN]: No event is associated in itteration %s" % (n+1))
+
+        elif n == 0:
             picks = self.picks.meta
 
         # read picks
@@ -136,7 +140,7 @@ class RealExecutor(object):
         out = proc.stdout.decode("utf8")
         print("[RealExecutor.real]: REAL", out)
     
-    def __convert2dict(self):
+    def __convert2dict(self, n):
         # read txt
         events_rawfile = os.path.join(self.rawout_dir, "catalog_sel.txt")
         picks_rawfile = os.path.join(self.rawout_dir, "phase_sel.txt")
@@ -169,9 +173,13 @@ class RealExecutor(object):
         # make EventInfo instance
         self.eventInfoList = [EventInfo(i+1, event, picks, "real") for i, (event, picks) in enumerate(zip(events_meta, picks_meta))]
 
+        # If the final number of events is 0.
+        if (n == self.config.itr_real) and (len(self.eventInfoList) == 0):
+            print("[WARN]: Number of associated events is 0.") 
+
     def convert2json(self, config, mkEachJson=False):
         # convert to dict
-        self.__convert2dict()
+        self.__convert2dict(config.n)
 
         # write json
         ## add to meta
