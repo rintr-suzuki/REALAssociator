@@ -66,6 +66,7 @@ class MasterProcess(object):
         self.config = config
 
     def rm_tmp(self):
+        # remove tmp file
         ext = ["lst", "tbl", "txt", "dat"]
 
         l = []
@@ -74,3 +75,10 @@ class MasterProcess(object):
         for file in l:
             os.remove(file)
             # print(file)
+        
+        # remove tmp dir
+        paths = glob.glob(self.config.tmpdir + "/**/*", recursive=True)
+        max_depth = max(paths, key=lambda p: p.count(os.sep)).count(os.sep)
+        l = [p for p in paths if p.count(os.sep) == max_depth]
+        for dir in l:
+            os.removedirs(dir)
