@@ -18,8 +18,9 @@ class EventInfo(object):
             self.event["time"] = event[4].split('.')
 
 
-            event_timestamp_str = self.event["year"] + self.event["month"] + self.event["day"] + " " + self.event["time"][0]
-            event_timestamp_dt = datetime.datetime.strptime(event_timestamp_str, '%Y%m%d %H:%M:%S') \
+            event_timestamp_str = self.event["year"] + self.event["month"] + self.event["day"] + " " + self.event["time"][0][:5]
+            event_timestamp_dt = datetime.datetime.strptime(event_timestamp_str, '%Y%m%d %H:%M') \
+                + datetime.timedelta(seconds=int(self.event["time"][0][6:])) \
                 + datetime.timedelta(microseconds=round(int(self.event["time"][1].ljust(6, '0'))/1000.0)*1000)
             self.event["timestamp"] = event_timestamp_dt.strftime("%Y-%m-%dT%H:%M:%S.%f")[:-3]
 
