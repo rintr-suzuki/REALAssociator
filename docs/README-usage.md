@@ -19,8 +19,8 @@ Detailed usage for REALAssociator
     For the detailed information, see https://github.com/AI4EPS/PhaseNet
   * You can pick phase from WIN waveform files with [WIN2PhaseNet](https://github.com/rintr-suzuki/WIN2PhaseNet) and PhaseNet.
   * **Only the 1st day of data within the file is processed.** Please divide the data into daily data. <br>
-    D option of original REAL configration is automatically set to the 1st day.
-  * Make directry named `REALAssociator/data` and put the files there. <br>
+    D option of original REAL configuration is automatically set to the 1st day.
+  * Make directory named `REALAssociator/data` and put the files there. <br>
     You can change the path with `--infile` option.
 
 * channel table: correspondence Table of stations and their code
@@ -28,9 +28,9 @@ Detailed usage for REALAssociator
     For the detailed information, see https://wwweic.eri.u-tokyo.ac.jp/WIN/man.ja/win.html (only in Japanese).
   * **Only support <=1,500 stations**
   * **Only support the following "component code (column [5])"**. <br>
-    -Vertical compornent: EW,E,X,VX <br>
-    -Horizontal compornent 1: NS,N,Y,VY <br>
-    -Horizontal compornent 2: UD,U,Z,VZ
+    -Vertical component: EW,E,X,VX <br>
+    -Horizontal component 1: NS,N,Y,VY <br>
+    -Horizontal component 2: UD,U,Z,VZ
   * **"Voltage amplification ratio (column [12])" is modified to the int value.**
   * NIED provides channel table at the same time when downloading WIN waveform files. <br>
     For the detailed information, see https://hinetwww11.bosai.go.jp/auth/download/cont/?LANG=en
@@ -41,7 +41,7 @@ Detailed usage for REALAssociator
   * format: txt format <br>
     For the detailed information, see "traveltime table" in [here](../org/REAL_userguide_July2021.pdf).
   * You can use `REALAssociator/etc/ttdb.txt` created from the velocity structure by Hasegawa et al. (1978) as a default.
-  * G option of original REAL configration is automatically calculated to use the entire file from travel time table.
+  * G option of original REAL configuration is automatically calculated to use the entire file from travel time table.
   * You can change the path with `--ttime` option.
 
 ### 2. Configuration of REALAssociator
@@ -49,14 +49,14 @@ Detailed usage for REALAssociator
 
   | Option | Description |
   | --- | --- |
-  | `[--dep DEP]` | - search range in depth (unit: km, default: `250`) <br> - same as "rh" of original REAL configration |
+  | `[--dep DEP]` | - search range in depth (unit: km, default: `250`) <br> - same as "rh" of original REAL configuration |
   | `[--ho HO]` | - search range in horizontal (unit: degree, default: `0.7`) <br> - same as "rx" |
   | `[--ddep DDEP]` | - search grid size for depth (unit: km, default: `10`) <br> - same as "tdh" | 
   | `[--dho DHO]` | - search grid size for horizontal (unit: degree, default: `0.1`) <br> - same as "tdx" |
   | `[--nps NPS]` | Threshold for number of P,S,P+S on association connected by hyphens. <br> It can be set for each iteration by separating them with commas. (default: 30-10-40,0-2-5) |
   | `[--itr_real ITR_REAL]` | Number of REAL process iterations. <br> After 2nd association, remaining picks are used, excluding the picks associated before the (n-1)th association. (default: 2) |
 
-* Other settings of original REAL configration are as follows:
+* Other settings of original REAL configuration are as follows:
   * R option
     * tint: 5
     * gap: 360
@@ -81,7 +81,7 @@ Detailed usage for REALAssociator
     * nxd: Not support
     * rsel: 5.0
 
-* See [here](../org/REAL_userguide_July2021.pdf) for the detailed information about the original REAL configration.
+* See [here](../org/REAL_userguide_July2021.pdf) for the detailed information about the original REAL configuration.
 
 * Use `-h` option for the detailed information of all other options.
 
