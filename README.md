@@ -1,6 +1,8 @@
 # REALAssociator
 ## Summary
 
+[![DOI](https://img.shields.io/badge/DOI-10.1126%2Fscience.adt6389-blue)](https://doi.org/10.1126/science.adt6389)
+
 ![](docs/assets/REALAssociator_overview.png)
  
 * Tool to associate phase data from PhaseNet (Zhu and Beroza, 2019) using REAL (Zhang et al., 2019).
